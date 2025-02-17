@@ -1,0 +1,31 @@
+def ozetleme(metin):
+  sentences = sent_tokenize(metin, language='turkish')
+  stop_words = set(stopwords.words('turkish'))
+  words = word_tokenize(metin)
+  words = [word.lower() for word in words if word.isalpha()]
+  words = [word for word in words if word not in stop_words]
+  lemmatizer = WordNetLemmatizer()
+
+  words = [lemmatizer.lemmatize(word) for word in words]
+  freq_dist = FreqDist(words)
+  sentence_scores = {}
+
+  for i, sentence in enumerate(sentences):
+      sentence_words = word_tokenize(sentence.lower())
+      sentence_score = sum([freq_dist[word] for word in sentence_words if word in freq_dist])
+
+      sentence_scores[i] = sentence_score
+  sorted_scores = sorted(sentence_scores.items(), key=lambda x: x[1], reverse=True)
+  selected_sentences = sorted_scores[:1]
+  selected_sentences = sorted(selected_sentences)
+
+  # Özet oluşturma
+  summary = ' '.join([sentences[i] for i, _ in selected_sentences])
+  print(summary)
+
+
+
+
+
+metin = """Hârizmî, matematik, coğrafya ve astronomi alanında önemli çalışmalar yapmış Müslüman bir bilim insanıdır. Hârizmî, özellikle matematiğe yapmış olduğu katkılar sebebiyle matematiğin bir dalı olan cebirin kurucusu olarak bilinir. Hârizmî’nin bilimsel çalışmaları, Orta Çağ’da İslâm Dünyası’nın sınırlarını aşarak Latince çeviriler yoluyla Avrupa’ya ulaştı. """
+ozetleme(metin)
